@@ -1,0 +1,13 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/container.astro";
+import SolidCars from "@components/solidCar"
+---
+
+<Layout title="Solid">
+  <Container>
+    <div class="grid md:grid-cols-1 mx-auto max-w-4xl mt-12">
+        <SolidCars client:load/>
+    <div>
+  </Container>
+</Layout>

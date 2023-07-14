@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>My Web Page</title>
+    <style>
+      .content {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .content__card {
+        flex: 0 0 300px;
+        margin: 1rem;
+        overflow: hidden;
+        border-radius: 8px;
+      }
+
+      .content__card img {
+        width: 100%;
+        transform: scale(1.1);
+        transition: transform 0.7s ease;
+      }
+
+      .content__card:hover img {
+        transform: scale(1.125);
+      }
+
+      .content__text {
+        color: white;
+        flex: 0 0 400px;
+        margin: 1rem;
+      }
+
+      .content__text h2 {
+        font-family: azo-sans-uber, sans-serif;
+        font-weight: 400;
+        font-style: normal;
+        text-align: left;
+        font-size: 24px;
+        margin-bottom: 0.5rem;
+      }
+
+      .content__text p {
+        font-family: azo-sans-web, sans-serif;
+        font-weight: 300;
+        font-style: normal;
+        text-align: left;
+        font-weight: 200;
+        font-size: 16px;
+        margin-bottom: 1rem;
+      }
+
+      .content__buttons {
+        display: flex;
+        justify-content: left;
+      }
+
+      .content__buttons button {
+        color: white;
+        font-family: azo-sans-web, sans-serif;
+        font-weight: 300;
+        font-style: normal;
+        margin-top: 1rem;
+        margin-right: 0.5rem;
+        padding: 0.5rem 2rem;
+        background-color: #2c4dde;
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
+        border-radius: 9999px;
+      }
+
+      .content__buttons button a {
+        text-decoration: none;
+        color: white;
+      }
+
+      #normal {
+        background-color: #090d2b;
+      }
+
+      .highlight {
+        color: #2c4dde;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="content">
+      <div class="content__card">
+        <img src="src/pages/images/start.jpg" alt="Card Image" />
+      </div>
+      <div class="content__text">
+        <h2>
+          Share your thoughts about books at <span class="highlight"
+            >Bookreviewz!</span
+          >
+        </h2>
+        <p>
+          sociis natoque penatibus et magnis dis parturient montes nascetur
+          ridiculus mus mauris vitae ultricies leo integer malesuada nunc vel
+          risus
+        </p>
+        <div class="content__buttons">
+          <button><a href="http://localhost:3000/Signin">Sign in</a></button>
+          <button id="normal"
+            ><a href="http://localhost:3000/Signup">Sign up</a></button
+          >
+        </div>
+      </div>
+    </section>
+  </body>
+</html>
