@@ -12,6 +12,10 @@ export default function SolidPersonTableServer(props) {
   const [reviewAuthor, setReviewAuthor] = createSignal("");
   const [reviewText, setReviewText] = createSignal("");
   const [reviewRating, setReviewRating] = createSignal("");
+  const [showReviewFields, setShowReviewFields] = createSignal(false);
+  const [enlargedCardOverflow, setEnlargedCardOverflow] = createSignal("auto");
+
+  setShowReviewFields(false);
 
   const fetchBooksRessource = async () => {
     let data = await fetch(baseUrl + "books");
@@ -72,7 +76,7 @@ export default function SolidPersonTableServer(props) {
     fetchReviewsRessource
   );
 
-  function getRatingFromRadio() {
+  /*function getRatingFromRadio() {
     if (document.getElementById("rating1").checked) {
       return 1;
     } else if (document.getElementById("rating2").checked) {
@@ -84,7 +88,7 @@ export default function SolidPersonTableServer(props) {
     } else if (document.getElementById("rating5").checked) {
       return 5;
     }
-  }
+  }*/
 
   const cloneAndEnlargeBookCard = (id) => {
     setSelectedBookIndex(id);
@@ -236,7 +240,7 @@ export default function SolidPersonTableServer(props) {
         {selectedBookIndex() !== "" && (
           <div>
             <div
-              class="dark-overlay"
+              class="dark-overlay "
               style={{
                 position: "fixed",
                 left: "0px",
@@ -245,27 +249,27 @@ export default function SolidPersonTableServer(props) {
                 width: "100vw",
                 height: "100vh",
                 background: "#090d2b",
-                opacity: "80%",
+                opacity: "90%",
               }}
               onClick={clearSelectedBook}
             ></div>
 
             {/* Enlarged Book Card */}
             <div
-              class="enlarged-book-card-container"
+              class="enlarged-book-card-container rounded-lg"
               style={{
                 position: "fixed",
                 top: "50%",
                 left: "50%",
                 transform: "translate(-50%, -50%)",
                 width: "600px",
-                height: "900px",
+                height: "850px",
                 zIndex: 1,
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                background: "#090d2b",
-                overflow: "auto",
+                background: "#0F1545",
+                overflow: enlargedCardOverflow(),
                 pointerEvents: "auto",
               }}
             >
@@ -273,7 +277,7 @@ export default function SolidPersonTableServer(props) {
                 class="book-card rounded-lg overflow-y-scroll overscroll-y-none scrollbar-hidden"
                 style={{
                   width: "600px",
-                  height: "900px",
+                  height: "850px",
                 }}
                 key={selectedBookIndex()}
               >
@@ -317,7 +321,7 @@ export default function SolidPersonTableServer(props) {
                       width: "100%",
                       height: "50%",
                       background:
-                        "linear-gradient(to top, rgba(9,13,43,1) 0%,rgba(9,13,43,0) 100%)",
+                        "linear-gradient(to top, rgba(15,21,69,1) 0%,rgba(9,13,43,0) 100%)",
                     }}
                   />
                 </div>
@@ -398,13 +402,121 @@ export default function SolidPersonTableServer(props) {
                           )?.name
                         }
                       </div>
+                      <div class="stars" style={{ padding: "1rem 0 0 0" }}>
+                        <i class="fa fa-star fa-2x text-amber-400"></i>
+                        <i class="fa fa-star fa-2x text-amber-400"></i>
+                        <i class="fa fa-star fa-2x text-amber-400"></i>
+                        <i class="fa fa-star fa-2x text-amber-400"></i>
+                        <i class="fa fa-star fa-2x "></i>
+                      </div>
+                      <div class="review-amount">(Total of 30 reviews)</div>
                     </div>
                   }
+
+                  {/* Write a review button */}
+                  <button
+                    class="review button text-center rounded-lg text-base font-light
+                    flex items-center justify-center w-64 h-12 relative border border-blue-500
+                    text-blue-500 hover:bg-blue-500 hover:text-white transition-colors"
+                    style={{ margin: "10rem 0rem 0rem 1rem" }}
+                    onClick={() => {
+                      setShowReviewFields(!showReviewFields());
+                      setEnlargedCardOverflow(
+                        showReviewFields() ? "hidden" : "auto"
+                      ); // Toggle the overflow property
+                    }}
+                  >
+                    Write a review
+                  </button>
+
+                  {showReviewFields() && (
+                    <div
+                      class="review-container flex flex-col rounded-lg text-base"
+                      style={{
+                        position: "fixed",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        zIndex: "9999",
+                        width: "400px",
+                        height: "500px",
+                        background: "#121212",
+                        padding: "2rem",
+                        overflow: "hidden", // Disable scrolling
+                      }}
+                    >
+                      <div
+                        class="delete-button text-right hover:text-red-500"
+                        onClick={() => {
+                          setShowReviewFields(!showReviewFields());
+                          setEnlargedCardOverflow(
+                            showReviewFields() ? "hidden" : "auto"
+                          ); // Toggle the overflow property
+                        }}
+                        style={{
+                          position: "absolute",
+                          right: "2rem",
+                        }} // Use position: "absolute" and adjust top and right positions
+                      >
+                        <i class="fas fa-times-circle"></i>
+                      </div>
+                      <label for="InputReviewAuthor">Name:</label>
+                      <input type="text" id="InputReviewAuthor" />
+                      <label for="InputReviewText">Text:</label>
+                      <input type="text" id="InputReviewText" />
+
+                      {/*<input type="radio" name="rating" id="rating1" />
+                      <label for="rating1">★</label>
+                      <input type="radio" name="rating" id="rating2" />
+                      <label for="rating2">★★</label>
+                      <input type="radio" name="rating" id="rating3" />
+                      <label for="rating3">★★★</label>
+                      <input type="radio" name="rating" id="rating4" />
+                      <label for="rating4">★★★★</label>
+                      <input type="radio" name="rating" id="rating5" checked />
+                      <label for="rating5">★★★★★</label>*/}
+
+                      <label for="rating">Rating:</label>
+                      <input
+                        type="text"
+                        name="rating"
+                        id="InputReviewRating"
+                        placeholder="Just type 0 to 5"
+                      />
+
+                      <button
+                        onClick={() => {
+                          setReviewAuthor(
+                            document.getElementById("InputReviewAuthor").value
+                          );
+                          setReviewRating(
+                            document.getElementById("InputReviewRating").value
+                          );
+                          setReviewText(
+                            document.getElementById("InputReviewText").value
+                          );
+                          postReview();
+                        }}
+                        class="button text-center rounded-lg text-base font-light
+                        flex items-center justify-center h-12 border border-blue-500
+                        text-blue-500 hover:bg-blue-500 hover:text-white transition-colors"
+                        style={{
+                          bottom: "1rem",
+                          position: "absolute",
+                          width: "256px",
+                          left: "50%",
+                          transform: "translateX(-50%)",
+                        }}
+                      >
+                        Review veröffentlichen!
+                      </button>
+                    </div>
+                  )}
 
                   {/* Description of book */}
                   <div
                     class="description-container"
-                    style={{ padding: "10rem 1rem 1rem 1rem" }}
+                    style={{ padding: "1rem 1rem 0 1rem" }}
                   >
                     <div class="caption text-base font-medium text-xl">
                       Summary
@@ -431,16 +543,26 @@ export default function SolidPersonTableServer(props) {
                       {reviews() &&
                         reviews().map((review) => (
                           <div
-                            class="review text-sm font-light rounded-lg"
+                            class="review-container text-sm font-light rounded-lg hover:shadow-xl shadow-slate-500 transition duration-300"
                             style={{
                               padding: "1rem",
                               margin: "1rem",
-                              color: "#fff",
-                              boxSizing: "border-box",
-                              background: "#202020",
+                              background: "#171c3e",
                             }}
                           >
-                            <div class="Username">{review.username}</div>
+                            <div
+                              className="delete-button text-right hover:text-red-500"
+                              style={{
+                                position: "absolute",
+                                right: "2rem",
+                              }}
+                            >
+                              <i class="fas fa-trash-alt"></i>
+                            </div>
+
+                            <div class="Username" style={{ padding: "" }}>
+                              {review.username}
+                            </div>
                             <div class="Rating" style={{ color: "gold" }}>
                               {review.rating}
                             </div>
@@ -470,60 +592,62 @@ export default function SolidPersonTableServer(props) {
                 </div>
 
                 {/* Review field */}
-                {/*<div
-                  class="review-fields"
-                  style={{
-                    zIndex: 5,
-                    pointerEvents: "auto",
-                  }}
-                >
-                  <br />
-                  <br />
-                  <br />
-                  <label for="InputReviewAuthor">Name: </label>
-                  <input type="text" id="InputReviewAuthor"></input>
-                  <br />
-                  <label for="InputReviewText">Text: </label>
-                  <input type="text" id="InputReviewText"></input>
-                  <br />
-
-                  <input type="radio" name="rating" id="rating1"></input>
-                  <label for="radio1">★</label>
-                  <br />
-                  <input type="radio" name="rating" id="rating2"></input>
-                  <label for="radio2">★★</label>
-                  <br />
-                  <input type="radio" name="rating" id="rating3"></input>
-                  <label for="radio3">★★★</label>
-                  <br />
-                  <input type="radio" name="rating" id="rating4"></input>
-                  <label for="radio4">★★★★</label>
-                  <br />
-                  <input
-                    type="radio"
-                    name="rating"
-                    id="rating5"
-                    checked="true"
-                  ></input>
-                  <label for="radio5">★★★★★</label>
-                  <br />
-
-                  <button
-                    onClick={() => {
-                      setReviewAuthor(
-                        document.getElementById("InputReviewAuthor").value
-                      );
-                      setReviewRating(getRatingFromRadio());
-                      setReviewText(
-                        document.getElementById("InputReviewText").value
-                      );
-                      postReview();
+                {/*
+                  <div
+                    class="review-fields"
+                    style={{
+                      zIndex: 5,
+                      pointerEvents: "auto",
                     }}
-                    class="my-10 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
                   >
-                    Review veröffentlichen!
-                  </button>
-                  </div>*/}
+                    <br />
+                    <br />
+                    <br />
+                    <label for="InputReviewAuthor">Name: </label>
+                    <input type="text" id="InputReviewAuthor"></input>
+                    <br />
+                    <label for="InputReviewText">Text: </label>
+                    <input type="text" id="InputReviewText"></input>
+                    <br />
+
+                    <input type="radio" name="rating" id="rating1"></input>
+                    <label for="radio1">★</label>
+                    <br />
+                    <input type="radio" name="rating" id="rating2"></input>
+                    <label for="radio2">★★</label>
+                    <br />
+                    <input type="radio" name="rating" id="rating3"></input>
+                    <label for="radio3">★★★</label>
+                    <br />
+                    <input type="radio" name="rating" id="rating4"></input>
+                    <label for="radio4">★★★★</label>
+                    <br />
+                    <input
+                      type="radio"
+                      name="rating"
+                      id="rating5"
+                      checked="true"
+                    ></input>
+                    <label for="radio5">★★★★★</label>
+                    <br />
+
+                    <button
+                      onClick={() => {
+                        setReviewAuthor(
+                          document.getElementById("InputReviewAuthor").value
+                        );
+                        setReviewRating(getRatingFromRadio());
+                        setReviewText(
+                          document.getElementById("InputReviewText").value
+                        );
+                        postReview();
+                      }}
+                      class="my-10 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+                    >
+                      Review veröffentlichen!
+                    </button>
+                  </div>
+                */}
               </div>
             </div>
           </div>
