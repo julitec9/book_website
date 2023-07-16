@@ -12,8 +12,24 @@ export default function SolidPersonTableServer(props) {
   const [reviewAuthor, setReviewAuthor] = createSignal("");
   const [reviewText, setReviewText] = createSignal("");
   const [reviewRating, setReviewRating] = createSignal("");
+  const [reviewId, setReviewId] = createSignal("");
   const [showReviewFields, setShowReviewFields] = createSignal(false);
   const [enlargedCardOverflow, setEnlargedCardOverflow] = createSignal("auto");
+
+  const reviewsLength = () => reviews()?.length || 0;
+
+  const calculateAverageRating = () => {
+    const reviewArray = reviews();
+    if (reviewArray && reviewArray.length > 0) {
+      const totalRating = reviewArray.reduce(
+        (accumulator, review) => accumulator + review.rating,
+        0
+      );
+      const averageRating = totalRating / reviewArray.length;
+      return averageRating.toFixed(1);
+    }
+    return 0;
+  };
 
   setShowReviewFields(false);
 
@@ -61,11 +77,23 @@ export default function SolidPersonTableServer(props) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         postType: "insert",
+        reviewId: reviewId(),
         reviewAuthor: reviewAuthor(),
         reviewRating: reviewRating(),
         reviewText: reviewText(),
         reviewISBN: selectedBookIndex(),
       }),
+    };
+    let data = await fetch(baseUrl + "reviews", requestOptions);
+    let json = await data.json();
+    reviewsRefetch();
+  };
+
+  const deleteReview = async (id) => {
+    const requestOptions = {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
     };
     let data = await fetch(baseUrl + "reviews", requestOptions);
     let json = await data.json();
@@ -402,14 +430,27 @@ export default function SolidPersonTableServer(props) {
                           )?.name
                         }
                       </div>
-                      <div class="stars" style={{ padding: "1rem 0 0 0" }}>
-                        <i class="fa fa-star fa-2x text-amber-400"></i>
-                        <i class="fa fa-star fa-2x text-amber-400"></i>
-                        <i class="fa fa-star fa-2x text-amber-400"></i>
-                        <i class="fa fa-star fa-2x text-amber-400"></i>
-                        <i class="fa fa-star fa-2x "></i>
+                      <div
+                        class="review-average"
+                        style={{ padding: "1rem 0 0 0" }}
+                      >
+                        (Rating: {calculateAverageRating}/5)
                       </div>
-                      <div class="review-amount">(Total of 30 reviews)</div>
+                      {
+                        <div
+                          class="stars"
+                          style={{ padding: "0.5rem 0 0.5rem 0" }}
+                        >
+                          <i class="fa fa-star fa-2x text-amber-400"></i>
+                          <i class="fa fa-star fa-2x text-amber-400"></i>
+                          <i class="fa fa-star fa-2x text-amber-400"></i>
+                          <i class="fa fa-star fa-2x text-amber-400"></i>
+                          <i class="fa fa-star fa-2x "></i>
+                        </div>
+                      }
+                      <div class="review-amount">
+                        (Total of {reviewsLength} reviews)
+                      </div>
                     </div>
                   }
 
@@ -455,15 +496,42 @@ export default function SolidPersonTableServer(props) {
                         }}
                         style={{
                           position: "absolute",
-                          right: "2rem",
+                          top: "1rem",
+                          right: "1rem",
                         }} // Use position: "absolute" and adjust top and right positions
                       >
                         <i class="fas fa-times-circle"></i>
                       </div>
-                      <label for="InputReviewAuthor">Name:</label>
-                      <input type="text" id="InputReviewAuthor" />
-                      <label for="InputReviewText">Text:</label>
-                      <input type="text" id="InputReviewText" />
+                      <div class="title text-center text-2xl font-extrabold tracking-wider">
+                        Bookreviewz
+                      </div>
+                      <div class="subtitle text-center text-xl font-light">
+                        Write a review!
+                      </div>
+
+                      <label
+                        for="InputReviewAuthor"
+                        class="font-extrabold pt-4"
+                      >
+                        UUID:
+                      </label>
+                      <input
+                        type="text"
+                        id="InputReviewId"
+                        class="top-2 relative rounded-md"
+                      />
+
+                      <label
+                        for="InputReviewAuthor"
+                        class="font-extrabold pt-4"
+                      >
+                        Name:
+                      </label>
+                      <input
+                        type="text"
+                        id="InputReviewAuthor"
+                        class="top-2 relative rounded-md"
+                      />
 
                       {/*<input type="radio" name="rating" id="rating1" />
                       <label for="rating1">★</label>
@@ -476,16 +544,31 @@ export default function SolidPersonTableServer(props) {
                       <input type="radio" name="rating" id="rating5" checked />
                       <label for="rating5">★★★★★</label>*/}
 
-                      <label for="rating">Rating:</label>
+                      <label for="rating" class="font-extrabold pt-4">
+                        Rating:
+                      </label>
                       <input
                         type="text"
                         name="rating"
                         id="InputReviewRating"
                         placeholder="Just type 0 to 5"
+                        class="top-2 relative rounded-md"
+                      />
+                      <label for="InputReviewText" class="font-extrabold pt-4">
+                        Text:
+                      </label>
+                      <input
+                        type="text"
+                        id="InputReviewText"
+                        class="top-2 relative rounded-md h-20"
+                        style={{ textAlign: "left" }}
                       />
 
                       <button
                         onClick={() => {
+                          setReviewId(
+                            document.getElementById("InputReviewId").value
+                          );
                           setReviewAuthor(
                             document.getElementById("InputReviewAuthor").value
                           );
@@ -550,15 +633,16 @@ export default function SolidPersonTableServer(props) {
                               background: "#171c3e",
                             }}
                           >
-                            <div
+                            <button
                               className="delete-button text-right hover:text-red-500"
                               style={{
                                 position: "absolute",
                                 right: "2rem",
                               }}
+                              onClick={() => deleteReview(review.id)}
                             >
                               <i class="fas fa-trash-alt"></i>
-                            </div>
+                            </button>
 
                             <div class="Username" style={{ padding: "" }}>
                               {review.username}
