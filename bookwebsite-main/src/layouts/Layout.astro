@@ -1,0 +1,43 @@
+---
+export interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/Bookreviewz.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <style>
+    @import url("https://use.typekit.net/vca4icf.css");
+
+    body {
+      height: 100%;
+      min-height: 100vh;
+      background-color: #090d2b;
+    }
+
+    /* Hide scrollbar for Chrome, Safari, and Opera */
+    body::-webkit-scrollbar {
+      width: 0;
+    }
+
+    /*body::-webkit-scrollbar-track {
+      background-color: #090d2b;
+    }
+
+    body::-webkit-scrollbar-thumb {
+      background-color: #090d2b;
+    }*/
+  </style>
+  <body>
+    <slot />
+  </body>
+</html>

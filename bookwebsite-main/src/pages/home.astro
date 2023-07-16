@@ -1,0 +1,15 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+import SolidBooks from "../components/SolidBooks.jsx";
+---
+
+<Layout title="Welcome to Bookreviewz.">
+  <Navbar />
+ <!--  <BookCard /> --> 
+ <SolidBooks client:load />
+ <div style="height: 100px; flex: 1 0 auto;"></div>
+
+  <Footer/>
+</Layout>
