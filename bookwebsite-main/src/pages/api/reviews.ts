@@ -36,7 +36,6 @@ export async function get({ params, request }) {
 }
 */
 
-
 export async function post({ params, request }) {
   let review = await request.json();
 
@@ -44,7 +43,9 @@ export async function post({ params, request }) {
     if (review.postType === "select") {
       if (review.hasOwnProperty("reviewISBN")) {
         let db = new sqlite(dbPath);
-        let reviewsFromDB = await db.prepare("SELECT * FROM Reviews where ISBN = (?)").all(review.reviewISBN);
+        let reviewsFromDB = await db
+          .prepare("SELECT * FROM Reviews where ISBN = (?)")
+          .all(review.reviewISBN);
         db.close();
         return {
           body: JSON.stringify({
@@ -55,49 +56,80 @@ export async function post({ params, request }) {
             },
           }),
         };
-      }
-      else {
+      } else {
         return {
           body: JSON.stringify({
             success: "error",
-            message: "attributes missing"
-          })
-        }
+            message: "attributes missing",
+          }),
+        };
       }
-    }
-    else if (review.postType === "insert") {
-      if (review.hasOwnProperty("reviewAuthor")
-        && review.hasOwnProperty("reviewText")
-        && review.hasOwnProperty("reviewRating")
-        && review.hasOwnProperty("reviewISBN")) {
+    } else if (review.postType === "insert") {
+      if (
+        review.hasOwnProperty("reviewAuthor") &&
+        review.hasOwnProperty("reviewText") &&
+        review.hasOwnProperty("reviewRating") &&
+        review.hasOwnProperty("reviewISBN") &&
+        review.hasOwnProperty("reviewId")
+      ) {
         let id = uuidv4();
         let db = new sqlite(dbPath);
-        let added = db.prepare("INSERT INTO Reviews (username, rating, text, ISBN) VALUES (?,?,?,?)")
-          .run(review.reviewAuthor, review.reviewRating, review.reviewText, review.reviewISBN);
+        let added = db
+          .prepare(
+            "INSERT INTO Reviews (username, rating, text, ISBN, id) VALUES (?,?,?,?,?)"
+          )
+          .run(
+            review.reviewAuthor,
+            review.reviewRating,
+            review.reviewText,
+            review.reviewISBN,
+            review.reviewId
+          );
         db.close();
         return {
           body: JSON.stringify({
             success: "ok",
-            message: "new review added"
-          })
+            message: "new review added",
+          }),
         };
       } else {
         return {
           body: JSON.stringify({
             success: "error",
-            message: "attributes missing"
-          })
-        }
+            message: "attributes missing",
+          }),
+        };
       }
     }
-  }
-  else {
+  } else {
     return {
       body: JSON.stringify({
         success: "error",
-        message: "attributes missing"
-      })
-    }
+        message: "attributes missing",
+      }),
+    };
+  }
+}
+
+export async function del({ params, request }) {
+  let body = await request.json();
+  if (body.hasOwnProperty("id")) {
+    let db = new sqlite(dbPath);
+    const updates = db.prepare("DELETE FROM Reviews WHERE id = ?").run(body.id);
+    db.close();
+    return {
+      body: JSON.stringify({
+        success: "ok",
+        message: updates.changes + " review deleted",
+      }),
+    };
+  } else {
+    return {
+      body: JSON.stringify({
+        success: "error",
+        message: "attributes missing",
+      }),
+    };
   }
 }
 
