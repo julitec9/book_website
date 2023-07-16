@@ -644,6 +644,17 @@ export default function SolidPersonTableServer(props) {
                               <i class="fas fa-trash-alt"></i>
                             </button>
 
+                            <button
+                              className="delete-button text-right hover:text-blue-500"
+                              style={{
+                                position: "absolute",
+                                right: "3rem",
+                              }}
+                              //onClick={() => deleteReview(review.id)}
+                            >
+                              <i class="fas fa-pencil-alt"></i>
+                            </button>
+
                             <div class="Username" style={{ padding: "" }}>
                               {review.username}
                             </div>
